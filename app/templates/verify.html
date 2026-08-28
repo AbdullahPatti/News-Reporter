@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Verify email – News Reporter{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto animate-fade">
+    <div class="text-center mb-8">
+        <div class="w-14 h-14 rounded-2xl bg-accent-soft flex items-center justify-center mx-auto mb-6">
+            <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+            </svg>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-semibold text-ink mb-3">Check your inbox</h1>
+        <p class="text-ink-muted">We sent a 6-digit code to<br><span id="displayEmail" class="text-ink font-medium"></span></p>
+    </div>
+
+    <div class="clay-surface rounded-clay-lg p-7 sm:p-9">
+        <form id="verifyForm" class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-ink mb-2 text-center">Verification code</label>
+                <input type="text" id="code" required maxlength="6" pattern="\d{6}" inputmode="numeric"
+                    class="clay-input w-full rounded-xl px-4 py-4 text-center text-2xl font-medium tracking-[0.5em] text-ink"
+                    placeholder="000000" autocomplete="one-time-code">
+            </div>
+
+            <button type="submit"
+                class="w-full py-3.5 rounded-full btn-primary text-sm font-medium">
+                Verify &amp; continue
+            </button>
+        </form>
+
+        <p id="error" class="mt-4 text-accent text-sm text-center hidden"></p>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+    if (!email) {
+        window.location.href = '/login';
+    } else {
+        document.getElementById('displayEmail').textContent = email;
+    }
+
+    document.getElementById("verifyForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        window.showSpinner(btn);
+
+        const errorEl = document.getElementById("error");
+        errorEl.classList.add("hidden");
+
+        const res = await fetch("/auth/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: email,
+                code: document.getElementById("code").value
+            })
+        });
+
+        if (res.ok) {
+            setTimeout(() => { window.location.href = "/dashboard"; }, 500);
+        } else {
+            const data = await res.json();
+            errorEl.textContent = data.detail || "Invalid code. Please try again.";
+            errorEl.classList.remove("hidden");
+            window.hideSpinner(btn);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in – News Reporter{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto animate-fade">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl sm:text-4xl font-semibold text-ink mb-3">Welcome back</h1>
+        <p class="text-ink-muted">Sign in to manage your daily digest.</p>
+    </div>
+
+    <div class="clay-surface rounded-clay-lg p-7 sm:p-9">
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-ink mb-2">Email</label>
+                <input type="email" id="email" required placeholder="you@example.com"
+                    class="clay-input w-full rounded-xl px-4 py-3 text-ink placeholder:text-ink-faint text-sm">
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-sm font-medium text-ink">Password</label>
+                    <a href="/forgot-password" class="text-xs text-ink-muted hover:text-accent">Forgot password?</a>
+                </div>
+                <input type="password" id="password" required placeholder="••••••••"
+                    class="clay-input w-full rounded-xl px-4 py-3 text-ink placeholder:text-ink-faint text-sm">
+            </div>
+
+            <button type="submit"
+                class="w-full py-3.5 rounded-full btn-primary text-sm font-medium mt-2">
+                Sign in
+            </button>
+        </form>
+
+        <p class="mt-8 pt-6 border-t border-ink/5 text-center text-sm text-ink-muted">
+            No account yet?
+            <a href="/register" class="text-ink font-medium hover:text-accent ml-1">Create one free</a>
+        </p>
+
+        <p id="error" class="mt-4 text-accent text-sm text-center hidden"></p>
+    </div>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        window.showSpinner(btn);
+
+        const errorEl = document.getElementById("error");
+        errorEl.classList.add("hidden");
+
+        const emailVal = document.getElementById("email").value;
+
+        const res = await fetch("/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: emailVal,
+                password: document.getElementById("password").value
+            })
+        });
+
+        if (res.ok) {
+            window.location.href = "/dashboard";
+        } else {
+            const data = await res.json();
+            if (data.detail === "unverified") {
+                window.location.href = `/verify?email=${encodeURIComponent(emailVal)}`;
+            } else {
+                errorEl.textContent = data.detail || "Sign in failed. Check your credentials.";
+                errorEl.classList.remove("hidden");
+                window.hideSpinner(btn);
+            }
+        }
+    });
+</script>
+{% endblock %}

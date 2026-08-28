@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Preferences – News Reporter{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto animate-fade">
+
+    <header class="mb-8">
+        <a href="/dashboard" class="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink mb-4">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
+            </svg>
+            Back to dashboard
+        </a>
+        <h1 class="text-3xl sm:text-4xl font-semibold text-ink mb-2">Preferences</h1>
+        <p class="text-ink-muted">Customize how and when you receive your digest.</p>
+    </header>
+
+    <div class="clay-surface rounded-clay-lg p-7 sm:p-9">
+        <form method="post" action="/dashboard/preferences" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-ink mb-2">Full name</label>
+                <input type="text" name="full_name" value="{{ user.full_name or '' }}" required
+                    class="clay-input w-full rounded-xl px-4 py-3 text-ink text-sm">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-ink mb-2">Delivery time <span class="text-ink-faint font-normal">(PKT)</span></label>
+                <div class="relative">
+                    <select name="preferred_hour"
+                        class="clay-input appearance-none w-full rounded-xl px-4 py-3 text-ink text-sm cursor-pointer">
+                        <option value="6" {% if user.preferred_hour==6 %}selected{% endif %}>6:00 AM</option>
+                        <option value="7" {% if user.preferred_hour==7 %}selected{% endif %}>7:00 AM</option>
+                        <option value="8" {% if user.preferred_hour==8 %}selected{% endif %}>8:00 AM</option>
+                        <option value="9" {% if user.preferred_hour==9 %}selected{% endif %}>9:00 AM</option>
+                        <option value="10" {% if user.preferred_hour==10 %}selected{% endif %}>10:00 AM</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-ink-faint">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </div>
+                <p class="mt-2 text-xs text-ink-faint">Changes apply from your next scheduled delivery.</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button type="submit"
+                    class="flex-1 py-3.5 rounded-full btn-primary text-sm font-medium">
+                    Save changes
+                </button>
+                <a href="/dashboard"
+                    class="flex-1 text-center py-3.5 rounded-full clay-surface text-sm font-medium text-ink-muted hover:text-ink hover:shadow-clay-sm">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

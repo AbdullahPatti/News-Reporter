@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}News Reporter – Your morning news, distilled{% endblock %}
+
+{% block content %}
+<div class="animate-fade">
+
+    <!-- Hero -->
+    <section class="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+        <p class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-soft text-accent text-xs font-medium tracking-wide mb-8">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+            Delivered daily · 6–10 AM PKT
+        </p>
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-semibold text-ink leading-[1.1] tracking-tight mb-6">
+            The news you need,<br class="hidden sm:block"> before your first coffee
+        </h1>
+        <p class="text-lg sm:text-xl text-ink-muted leading-relaxed max-w-2xl mx-auto mb-10 font-light">
+            Curated Pakistani and global stories, summarized with AI and delivered to your inbox every morning.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            <a href="/register" class="inline-flex items-center justify-center px-8 py-3.5 rounded-full btn-accent text-sm font-medium">
+                Start free
+            </a>
+            <a href="/login" class="inline-flex items-center justify-center px-8 py-3.5 rounded-full clay-surface text-ink text-sm font-medium hover:shadow-clay">
+                Sign in
+            </a>
+        </div>
+    </section>
+
+    <!-- Preview card — news app feel -->
+    <section class="clay-surface rounded-clay-lg p-6 sm:p-8 mb-16 sm:mb-20 animate-fade stagger-1 max-w-3xl mx-auto">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-ink/5">
+            <div>
+                <p class="text-xs font-medium text-ink-faint uppercase tracking-wider mb-1">Today's digest</p>
+                <p class="serif text-xl font-medium text-ink">Friday, August 28</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-accent-green-soft text-accent-green text-xs font-medium">Live preview</span>
+        </div>
+        <div class="space-y-5">
+            <article class="group">
+                <p class="text-[11px] font-medium text-accent-green uppercase tracking-wider mb-1.5">Pakistan</p>
+                <h3 class="serif text-lg sm:text-xl font-medium text-ink leading-snug mb-2 group-hover:text-accent transition-colors">
+                    Cabinet approves new economic reform package amid regional trade talks
+                </h3>
+                <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">
+                    Officials outlined measures aimed at stabilizing the rupee and expanding export corridors with neighboring states. Markets responded cautiously in early trading.
+                </p>
+                <p class="text-xs text-ink-faint mt-2">Dawn · 2h ago</p>
+            </article>
+            <div class="h-px bg-ink/5"></div>
+            <article class="group">
+                <p class="text-[11px] font-medium text-ink-faint uppercase tracking-wider mb-1.5">World</p>
+                <h3 class="serif text-lg sm:text-xl font-medium text-ink leading-snug mb-2 group-hover:text-accent transition-colors">
+                    Global climate summit reaches preliminary agreement on emissions targets
+                </h3>
+                <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">
+                    Delegates from 140 nations agreed on a framework for phased reductions, though enforcement mechanisms remain under negotiation.
+                </p>
+                <p class="text-xs text-ink-faint mt-2">Reuters · 4h ago</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+        <div class="clay-surface rounded-clay p-6 sm:p-7 animate-fade stagger-1">
+            <div class="w-10 h-10 rounded-xl bg-accent-green-soft flex items-center justify-center mb-5">
+                <svg class="w-5 h-5 text-accent-green" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A8.966 8.966 0 013 12c0-1.636.436-3.17 1.193-4.5"/>
+                </svg>
+            </div>
+            <h3 class="serif text-xl font-medium text-ink mb-2">Trusted sources</h3>
+            <p class="text-sm text-ink-muted leading-relaxed">
+                Dawn, Geo, Tribune, BBC, Reuters and more — curated so you get signal, not noise.
+            </p>
+        </div>
+
+        <div class="clay-surface rounded-clay p-6 sm:p-7 animate-fade stagger-2">
+            <div class="w-10 h-10 rounded-xl bg-accent-soft flex items-center justify-center mb-5">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                </svg>
+            </div>
+            <h3 class="serif text-xl font-medium text-ink mb-2">AI summaries</h3>
+            <p class="text-sm text-ink-muted leading-relaxed">
+                Neutral, concise 2–3 sentence summaries. Read what matters in under five minutes.
+            </p>
+        </div>
+
+        <div class="clay-surface rounded-clay p-6 sm:p-7 animate-fade stagger-3">
+            <div class="w-10 h-10 rounded-xl bg-canvas-warm flex items-center justify-center mb-5 shadow-clay-sm">
+                <svg class="w-5 h-5 text-ink-muted" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <h3 class="serif text-xl font-medium text-ink mb-2">Your schedule</h3>
+            <p class="text-sm text-ink-muted leading-relaxed">
+                Pick any hour from 6 to 10 AM Pakistan time. Your digest arrives when you're ready.
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}
