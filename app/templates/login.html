@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Sign in – News Reporter{% endblock %}
+{% block title %}Sign in – Daily Digest{% endblock %}
 
 {% block content %}
 <div class="max-w-md mx-auto animate-fade">
@@ -14,6 +14,7 @@
             <div>
                 <label class="block text-sm font-medium text-ink mb-2">Email</label>
                 <input type="email" id="email" required placeholder="you@example.com"
+                    autocomplete="email" inputmode="email"
                     class="clay-input w-full rounded-xl px-4 py-3 text-ink placeholder:text-ink-faint text-sm">
             </div>
 
@@ -23,6 +24,7 @@
                     <a href="/forgot-password" class="text-xs text-ink-muted hover:text-accent">Forgot password?</a>
                 </div>
                 <input type="password" id="password" required placeholder="••••••••"
+                    autocomplete="current-password"
                     class="clay-input w-full rounded-xl px-4 py-3 text-ink placeholder:text-ink-faint text-sm">
             </div>
 
@@ -50,7 +52,14 @@
         const errorEl = document.getElementById("error");
         errorEl.classList.add("hidden");
 
-        const emailVal = document.getElementById("email").value;
+        const emailVal = document.getElementById("email").value.trim();
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailVal);
+        if (!emailOk) {
+            errorEl.textContent = "Please enter a valid email address.";
+            errorEl.classList.remove("hidden");
+            window.hideSpinner(btn);
+            return;
+        }
 
         const res = await fetch("/auth/login", {
             method: "POST",
@@ -68,7 +77,7 @@
             if (data.detail === "unverified") {
                 window.location.href = `/verify?email=${encodeURIComponent(emailVal)}`;
             } else {
-                errorEl.textContent = data.detail || "Sign in failed. Check your credentials.";
+                errorEl.textContent = window.formatApiError(data, "Sign in failed. Check your credentials.");
                 errorEl.classList.remove("hidden");
                 window.hideSpinner(btn);
             }

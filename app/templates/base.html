@@ -4,13 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Newzed{% endblock %}</title>
+    <title>{% block title %}Daily Digest{% endblock %}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap"
         rel="stylesheet">
+    <link rel="preload" href="/static/fonts/Agrandir-Narrow.otf" as="font" type="font/otf" crossorigin>
+    <link rel="preload" href="/static/fonts/GaliModern-UltraLight.otf" as="font" type="font/otf" crossorigin>
+    <link rel="preload" href="/static/fonts/Gazpacho-Black.otf" as="font" type="font/otf" crossorigin>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -18,32 +21,33 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['DM Sans', 'system-ui', 'sans-serif'],
-                        serif: ['Source Serif 4', 'Georgia', 'serif'],
+                        sans: ['Gabarito', 'system-ui', 'sans-serif'],
+                        serif: ['Agrandir Narrow', 'Georgia', 'serif'],
+                        display: ['Gazpacho', 'Georgia', 'serif'],
+                        elegant: ['Gali Modern', 'Georgia', 'serif'],
                     },
                     colors: {
                         ink: {
-                            DEFAULT: '#1c1c1e',
-                            muted: '#636366',
-                            faint: '#aeaeb2',
+                            DEFAULT: '#1a1a2e',
+                            muted: '#6b6b8d',
+                            faint: '#a8a8c8',
                         },
                         canvas: {
-                            DEFAULT: '#f7f6f3',
-                            warm: '#f0ede8',
-                            card: '#faf9f7',
+                            DEFAULT: '#faf9f7',
+                            warm: '#f3f1ee',
+                            card: '#ffffff',
                         },
                         accent: {
-                            DEFAULT: '#e0544a',
-                            soft: '#fce8e6',
-                            green: '#2d6a4f',
-                            'green-soft': '#e8f3ed',
+                            DEFAULT: '#2d6a4f',
+                            soft: '#e8f3ed',
+                            dark: '#1b4d32',
                         },
                     },
                     boxShadow: {
-                        clay: '8px 8px 16px rgba(28,28,30,0.06), -4px -4px 12px rgba(255,255,255,0.9), inset 0 1px 0 rgba(255,255,255,0.8)',
-                        'clay-sm': '4px 4px 12px rgba(28,28,30,0.05), -2px -2px 8px rgba(255,255,255,0.85), inset 0 1px 0 rgba(255,255,255,0.7)',
-                        'clay-inset': 'inset 2px 2px 6px rgba(28,28,30,0.06), inset -2px -2px 6px rgba(255,255,255,0.9)',
-                        float: '0 20px 40px -12px rgba(28,28,30,0.12)',
+                        clay: '8px 8px 16px rgba(26,26,46,0.06), -4px -4px 12px rgba(255,255,255,0.9), inset 0 1px 0 rgba(255,255,255,0.8)',
+                        'clay-sm': '4px 4px 12px rgba(26,26,46,0.05), -2px -2px 8px rgba(255,255,255,0.85), inset 0 1px 0 rgba(255,255,255,0.7)',
+                        'clay-inset': 'inset 2px 2px 6px rgba(26,26,46,0.06), inset -2px -2px 6px rgba(255,255,255,0.9)',
+                        float: '0 20px 40px -12px rgba(26,26,46,0.12)',
                     },
                     borderRadius: {
                         clay: '1.25rem',
@@ -55,10 +59,34 @@
     </script>
 
     <style>
+        @font-face {
+            font-family: 'Agrandir Narrow';
+            src: url('/static/fonts/Agrandir-Narrow.otf') format('opentype');
+            font-weight: 400 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Gali Modern';
+            src: url('/static/fonts/GaliModern-UltraLight.otf') format('opentype');
+            font-weight: 200;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'Gazpacho';
+            src: url('/static/fonts/Gazpacho-Black.otf') format('opentype');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
         body {
-            font-family: 'DM Sans', system-ui, sans-serif;
-            background-color: #f7f6f3;
-            color: #1c1c1e;
+            font-family: 'Gabarito', system-ui, sans-serif;
+            background-color: #faf9f7;
+            color: #1a1a2e;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -66,8 +94,16 @@
         h2,
         h3,
         .serif {
-            font-family: 'Source Serif 4', Georgia, serif;
+            font-family: 'Agrandir Narrow', Georgia, serif;
             font-optical-sizing: auto;
+        }
+
+        .font-display {
+            font-family: 'Gazpacho', Georgia, serif;
+        }
+
+        .font-elegant {
+            font-family: 'Gali Modern', Georgia, serif;
         }
 
         a,
@@ -108,52 +144,52 @@
         }
 
         .clay-surface {
-            background: linear-gradient(145deg, #faf9f7 0%, #f3f1ed 100%);
-            box-shadow: 8px 8px 16px rgba(28, 28, 30, 0.06), -4px -4px 12px rgba(255, 255, 255, 0.9),
+            background: linear-gradient(145deg, #ffffff 0%, #f3f1ee 100%);
+            box-shadow: 8px 8px 16px rgba(26, 26, 46, 0.06), -4px -4px 12px rgba(255, 255, 255, 0.9),
                 inset 0 1px 0 rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .clay-input {
             background: #f5f3f0;
-            box-shadow: inset 2px 2px 6px rgba(28, 28, 30, 0.05), inset -1px -1px 4px rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(28, 28, 30, 0.06);
+            box-shadow: inset 2px 2px 6px rgba(26, 26, 46, 0.05), inset -1px -1px 4px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(26, 26, 46, 0.06);
         }
 
         .clay-input:focus {
             outline: none;
             background: #faf9f7;
-            border-color: rgba(224, 84, 74, 0.35);
-            box-shadow: inset 2px 2px 6px rgba(28, 28, 30, 0.04), 0 0 0 3px rgba(224, 84, 74, 0.12);
+            border-color: rgba(45, 106, 79, 0.35);
+            box-shadow: inset 2px 2px 6px rgba(26, 26, 46, 0.04), 0 0 0 3px rgba(45, 106, 79, 0.12);
         }
 
         .nav-blur {
-            background: rgba(247, 246, 243, 0.82);
+            background: rgba(250, 249, 247, 0.82);
             backdrop-filter: blur(16px) saturate(180%);
             -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border-bottom: 1px solid rgba(28, 28, 30, 0.06);
+            border-bottom: 1px solid rgba(26, 26, 46, 0.06);
         }
 
         .btn-primary {
-            background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
+            background: linear-gradient(180deg, #1a1a2e 0%, #2d2d44 100%);
             color: #fff;
-            box-shadow: 0 1px 2px rgba(28, 28, 30, 0.12), 0 4px 12px rgba(28, 28, 30, 0.15);
+            box-shadow: 0 1px 2px rgba(26, 26, 46, 0.12), 0 4px 12px rgba(26, 26, 46, 0.15);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(180deg, #2c2c2e 0%, #3a3a3c 100%);
-            box-shadow: 0 2px 4px rgba(28, 28, 30, 0.14), 0 8px 20px rgba(28, 28, 30, 0.18);
+            background: linear-gradient(180deg, #2d2d44 0%, #3d3d55 100%);
+            box-shadow: 0 2px 4px rgba(26, 26, 46, 0.14), 0 8px 20px rgba(26, 26, 46, 0.18);
             transform: translateY(-1px);
         }
 
         .btn-accent {
-            background: linear-gradient(180deg, #e0544a 0%, #c94a41 100%);
+            background: linear-gradient(180deg, #2d6a4f 0%, #1b4d32 100%);
             color: #fff;
-            box-shadow: 0 1px 2px rgba(224, 84, 74, 0.2), 0 4px 14px rgba(224, 84, 74, 0.25);
+            box-shadow: 0 1px 2px rgba(45, 106, 79, 0.2), 0 4px 14px rgba(45, 106, 79, 0.25);
         }
 
         .btn-accent:hover {
-            background: linear-gradient(180deg, #e8655c 0%, #d44f46 100%);
+            background: linear-gradient(180deg, #3a7d5c 0%, #255a3f 100%);
             transform: translateY(-1px);
         }
 
@@ -180,7 +216,7 @@
         .divider-dot::before {
             content: '·';
             margin: 0 0.5rem;
-            color: #aeaeb2;
+            color: #a8a8c8;
         }
     </style>
 </head>
@@ -191,14 +227,14 @@
         <div class="max-w-5xl mx-auto px-5 sm:px-8 h-[4.25rem] flex items-center justify-between">
             <a href="/" class="flex items-center gap-2.5 group">
                 <span
-                    class="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-accent-green flex items-center justify-center shadow-clay-sm">
+                    class="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-accent-dark flex items-center justify-center shadow-clay-sm">
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                     </svg>
                 </span>
-                <span class="text-lg font-semibold tracking-tight text-ink serif">Newzed</span>
+                <span class="text-lg font-semibold tracking-tight text-ink font-display">Daily Digest</span>
             </a>
 
             <div class="flex items-center gap-1 sm:gap-2 text-sm">
@@ -231,7 +267,7 @@
     <footer class="mt-auto border-t border-ink/5 py-10">
         <div
             class="max-w-5xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-ink-faint">
-            <p>&copy; 2026 Newzed</p>
+            <p>&copy; 2026 Daily Digest</p>
             <p class="text-center sm:text-right">AI-powered daily digest · Pakistan &amp; world news</p>
         </div>
     </footer>
@@ -243,6 +279,26 @@
             btn.innerHTML = '<div class="spinner btn-spinner mx-auto"></div>';
             btn.disabled = true;
             btn.classList.add('opacity-70', 'cursor-not-allowed');
+        };
+
+        window.formatApiError = function (data, fallback) {
+            if (!data) return fallback;
+            const detail = data.detail;
+            if (typeof detail === "string") return detail;
+            if (Array.isArray(detail)) {
+                return detail.map(function (err) {
+                    const msg = (err && err.msg) ? err.msg : String(err);
+                    const loc = ((err && err.loc) || []).join(" ").toLowerCase();
+                    if (msg.toLowerCase().includes("email") || loc.includes("email")) {
+                        return "Please enter a valid email address.";
+                    }
+                    if (loc.includes("password") || msg.toLowerCase().includes("password")) {
+                        return msg.replace(/^Value error,\s*/i, "");
+                    }
+                    return msg.replace(/^Value error,\s*/i, "");
+                }).join(" ");
+            }
+            return fallback;
         };
 
         window.hideSpinner = function (btn) {

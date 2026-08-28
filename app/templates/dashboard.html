@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard – News Reporter{% endblock %}
+{% block title %}Dashboard – Daily Digest{% endblock %}
 
 {% block content %}
 <div class="animate-fade max-w-2xl mx-auto">
@@ -8,7 +8,7 @@
     <header class="mb-10">
         <p class="text-xs font-medium text-ink-faint uppercase tracking-wider mb-2">Your digest</p>
         <h1 class="text-3xl sm:text-4xl font-semibold text-ink mb-2">
-            Good morning, {{ user.full_name.split()[0] }}
+            Good morning{% if user.full_name %}, {{ user.full_name.split()[0] }}{% endif %}
         </h1>
         <p class="text-ink-muted">
             Next delivery at <span class="text-ink font-medium">{{ user.preferred_hour }}:00 AM</span> Pakistan time
@@ -18,8 +18,8 @@
     <!-- Status card -->
     <div class="clay-surface rounded-clay-lg p-6 sm:p-8 mb-6">
         <div class="flex items-start gap-4">
-            <div class="w-11 h-11 rounded-xl bg-accent-green-soft flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5 text-accent-green" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <div class="w-11 h-11 rounded-xl bg-accent-soft flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
             </div>

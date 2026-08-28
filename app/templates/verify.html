@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Verify email – News Reporter{% endblock %}
+{% block title %}Verify email – Daily Digest{% endblock %}
 
 {% block content %}
 <div class="max-w-md mx-auto animate-fade">
@@ -63,7 +63,7 @@
             setTimeout(() => { window.location.href = "/dashboard"; }, 500);
         } else {
             const data = await res.json();
-            errorEl.textContent = data.detail || "Invalid code. Please try again.";
+            errorEl.textContent = window.formatApiError(data, "Invalid code. Please try again.");
             errorEl.classList.remove("hidden");
             window.hideSpinner(btn);
         }

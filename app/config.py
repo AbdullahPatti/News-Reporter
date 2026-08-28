@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     ENVIRONMENT: str = "development"
+    APP_BASE_URL: str = "http://127.0.0.1:8000"
 
     # Database
     DATABASE_URL: str
@@ -16,7 +17,7 @@ class Settings(BaseSettings):
 
     # Email
     RESEND_API_KEY: Optional[str] = None
-    EMAIL_FROM: str = "News Reporter <onboarding@resend.dev>"
+    EMAIL_FROM: str = "Daily Digest <onboarding@resend.dev>"
 
     # Optional / Future
     YOUTUBE_API_KEY: Optional[str] = None

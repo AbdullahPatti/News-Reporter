@@ -19,7 +19,7 @@ def main():
         html = build_digest_html(user, pakistan, world)
 
         today = datetime.now(PKT).strftime("%d %b")
-        subject = f"News Reporter • {today} – Top stories for you"
+        subject = f"Daily Digest • {today} – Top stories for you"
 
         print(f"Sending to {user.email}...")
         msg_id = send_digest_email(user.email, subject, html)

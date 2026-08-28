@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}News Reporter – Your morning news, distilled{% endblock %}
+{% block title %}Daily Digest – Your morning news, distilled{% endblock %}
 
 {% block content %}
 <div class="animate-fade">
@@ -11,61 +11,62 @@
             <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
             Delivered daily · 6–10 AM PKT
         </p>
-        <h1 class="text-4xl sm:text-5xl md:text-6xl font-semibold text-ink leading-[1.1] tracking-tight mb-6">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-semibold text-ink leading-[1.1] tracking-tight mb-6 font-display">
             The news you need,<br class="hidden sm:block"> before your first coffee
         </h1>
         <p class="text-lg sm:text-xl text-ink-muted leading-relaxed max-w-2xl mx-auto mb-10 font-light">
             Curated Pakistani and global stories, summarized with AI and delivered to your inbox every morning.
         </p>
         <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+            {% if user %}
+            <a href="/dashboard" class="inline-flex items-center justify-center px-8 py-3.5 rounded-full btn-accent text-sm font-medium">
+                Open dashboard
+            </a>
+            {% else %}
             <a href="/register" class="inline-flex items-center justify-center px-8 py-3.5 rounded-full btn-accent text-sm font-medium">
                 Start free
             </a>
             <a href="/login" class="inline-flex items-center justify-center px-8 py-3.5 rounded-full clay-surface text-ink text-sm font-medium hover:shadow-clay">
                 Sign in
             </a>
+            {% endif %}
         </div>
     </section>
 
-    <!-- Preview card — news app feel -->
+    {% if stories %}
     <section class="clay-surface rounded-clay-lg p-6 sm:p-8 mb-16 sm:mb-20 animate-fade stagger-1 max-w-3xl mx-auto">
         <div class="flex items-center justify-between mb-6 pb-4 border-b border-ink/5">
             <div>
                 <p class="text-xs font-medium text-ink-faint uppercase tracking-wider mb-1">Today's digest</p>
-                <p class="serif text-xl font-medium text-ink">Friday, August 28</p>
+                <p class="serif text-xl font-medium text-ink">{{ today_str }}</p>
             </div>
-            <span class="px-3 py-1 rounded-full bg-accent-green-soft text-accent-green text-xs font-medium">Live preview</span>
+            <span class="px-3 py-1 rounded-full bg-accent-soft text-accent text-xs font-medium">Live</span>
         </div>
         <div class="space-y-5">
-            <article class="group">
-                <p class="text-[11px] font-medium text-accent-green uppercase tracking-wider mb-1.5">Pakistan</p>
-                <h3 class="serif text-lg sm:text-xl font-medium text-ink leading-snug mb-2 group-hover:text-accent transition-colors">
-                    Cabinet approves new economic reform package amid regional trade talks
-                </h3>
-                <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">
-                    Officials outlined measures aimed at stabilizing the rupee and expanding export corridors with neighboring states. Markets responded cautiously in early trading.
-                </p>
-                <p class="text-xs text-ink-faint mt-2">Dawn · 2h ago</p>
-            </article>
+            {% for story in stories %}
+            {% if not loop.first %}
             <div class="h-px bg-ink/5"></div>
-            <article class="group">
-                <p class="text-[11px] font-medium text-ink-faint uppercase tracking-wider mb-1.5">World</p>
-                <h3 class="serif text-lg sm:text-xl font-medium text-ink leading-snug mb-2 group-hover:text-accent transition-colors">
-                    Global climate summit reaches preliminary agreement on emissions targets
+            {% endif %}
+            <article>
+                <p class="text-[11px] font-medium {% if story.section == 'Pakistan' %}text-accent{% else %}text-ink-faint{% endif %} uppercase tracking-wider mb-1.5">{{ story.section }}</p>
+                <h3 class="serif text-lg sm:text-xl font-medium text-ink leading-snug mb-2">
+                    <a href="{{ story.url }}" target="_blank" rel="noopener noreferrer" class="hover:text-accent">{{ story.title }}</a>
                 </h3>
-                <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">
-                    Delegates from 140 nations agreed on a framework for phased reductions, though enforcement mechanisms remain under negotiation.
-                </p>
-                <p class="text-xs text-ink-faint mt-2">Reuters · 4h ago</p>
+                {% if story.summary %}
+                <p class="text-sm text-ink-muted leading-relaxed line-clamp-2">{{ story.summary }}</p>
+                {% endif %}
+                <p class="text-xs text-ink-faint mt-2">{{ story.source }}{% if story.time_ago %} · {{ story.time_ago }}{% endif %}</p>
             </article>
+            {% endfor %}
         </div>
     </section>
+    {% endif %}
 
     <!-- Features -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
         <div class="clay-surface rounded-clay p-6 sm:p-7 animate-fade stagger-1">
-            <div class="w-10 h-10 rounded-xl bg-accent-green-soft flex items-center justify-center mb-5">
-                <svg class="w-5 h-5 text-accent-green" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <div class="w-10 h-10 rounded-xl bg-accent-soft flex items-center justify-center mb-5">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A8.966 8.966 0 013 12c0-1.636.436-3.17 1.193-4.5"/>
                 </svg>
             </div>

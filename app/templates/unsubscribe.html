@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Unsubscribe – Daily Digest{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto animate-fade text-center">
+    <h1 class="text-3xl sm:text-4xl font-semibold text-ink mb-3">
+        {% if unsubscribed %}You’re unsubscribed{% else %}Link not valid{% endif %}
+    </h1>
+    <p class="text-ink-muted mb-8">
+        {% if unsubscribed %}
+        You won’t receive Daily Digest emails anymore. You can sign in later if you change your mind.
+        {% else %}
+        This unsubscribe link is missing or has expired.
+        {% endif %}
+    </p>
+    <a href="/" class="inline-flex items-center justify-center px-8 py-3.5 rounded-full btn-primary text-sm font-medium">
+        Back to home
+    </a>
+</div>
+{% endblock %}

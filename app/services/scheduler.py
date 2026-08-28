@@ -88,7 +88,7 @@ def run_morning_digest():
         for user in users:
             try:
                 html = build_digest_html(user, pakistan_articles, world_articles)
-                subject = f"News Reporter • {now.strftime('%d %b')} – Top stories for you"
+                subject = f"Daily Digest • {now.strftime('%d %b')} – Top stories for you"
 
                 msg_id = send_digest_email(user.email, subject, html)
 
