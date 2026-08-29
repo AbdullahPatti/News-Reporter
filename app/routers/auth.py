@@ -76,7 +76,12 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
         existing_user.verification_code_expires_at = expires
         db.commit()
         db.refresh(existing_user)
-        send_otp_email(existing_user.email, code)
+        msg_id = send_otp_email(existing_user.email, code)
+        if not msg_id:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to send OTP email. If you are the admin, please verify your domain in Resend."
+            )
         return existing_user
 
     code, expires = _new_otp()
@@ -93,7 +98,12 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
-    send_otp_email(new_user.email, code)
+    msg_id = send_otp_email(new_user.email, code)
+    if not msg_id:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to send OTP email. If you are the admin, please verify your domain in Resend."
+        )
     return new_user
 
 
@@ -156,7 +166,12 @@ def forgot_password(data: ForgotPasswordRequest, db: Session = Depends(get_db)):
             expires_delta=timedelta(hours=1),
         )
         reset_url = f"{settings.APP_BASE_URL.rstrip('/')}/reset-password?token={token}"
-        send_password_reset_email(user.email, reset_url)
+        msg_id = send_password_reset_email(user.email, reset_url)
+        if not msg_id:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to send password reset email. If you are the admin, please verify your domain in Resend."
+            )
 
     return {"detail": "If that email is registered, we sent a reset link."}
 
