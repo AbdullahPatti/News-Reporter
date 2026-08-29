@@ -100,7 +100,7 @@
         });
 
         if (res.ok) {
-            window.location.href = `/verify?email=${encodeURIComponent(emailVal)}`;
+            window.location.href = "/dashboard";
         } else {
             const data = await res.json();
             errorEl.textContent = window.formatApiError(data, "Registration failed. Please try again.");

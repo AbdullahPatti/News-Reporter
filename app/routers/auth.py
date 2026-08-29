@@ -59,52 +59,28 @@ def _is_expired(when: datetime | None) -> bool:
     return when < datetime.now(timezone.utc)
 
 
-@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
-        if existing_user.is_verified:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered"
-            )
-        code, expires = _new_otp()
-        existing_user.hashed_password = hash_password(user_data.password)
-        existing_user.full_name = user_data.full_name
-        existing_user.preferred_hour = user_data.preferred_hour
-        existing_user.verification_code = code
-        existing_user.verification_code_expires_at = expires
-        db.commit()
-        db.refresh(existing_user)
-        msg_id = send_otp_email(existing_user.email, code)
-        if not msg_id:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to send OTP email. If you are the admin, please verify your domain in Resend."
-            )
-        return existing_user
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
 
-    code, expires = _new_otp()
     new_user = User(
         email=user_data.email,
         hashed_password=hash_password(user_data.password),
         full_name=user_data.full_name,
         preferred_hour=user_data.preferred_hour,
-        verification_code=code,
-        verification_code_expires_at=expires
+        is_verified=True,
     )
 
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    msg_id = send_otp_email(new_user.email, code)
-    if not msg_id:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to send OTP email. If you are the admin, please verify your domain in Resend."
-        )
-    return new_user
+    return _issue_session(new_user)
 
 
 @router.post("/login", response_model=Token)
@@ -121,12 +97,6 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Account is deactivated"
-        )
-
-    if not user.is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="unverified"
         )
 
     user.last_login_at = datetime.now(timezone.utc)
