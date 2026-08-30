@@ -3,18 +3,13 @@ from google.genai import types
 from sqlalchemy.orm import Session
 from typing import Optional
 import time
-import re
 
 from app.config import settings
 from app.models import RawArticle
 
 client = genai.Client(api_key=settings.GEMINI_API_KEY) if settings.GEMINI_API_KEY else None
 
-# Use the model that has better free-tier limits if possible
-# Try these in order of preference
-MODEL = "gemini-3.5-flash-lite"         # usually more generous
-# MODEL = "gemini-2.0-flash-lite"  # even higher RPM
-# MODEL = "gemini-3.6-flash"       # the one you used (very strict)
+MODEL = "gemini-3.5-flash-lite"
 
 SYSTEM_PROMPT = (
     "You are a professional Pakistani news editor. "
@@ -55,8 +50,7 @@ def summarize_text(title: str, content: str, max_retries: int = 3) -> Optional[s
 
             if response and response.text:
                 summary = response.text.strip()
-                # Basic quality check
-                if len(summary) > 40 and not summary.startswith("I ") and "as an AI" not in summary.lower():
+                if len(summary) > 40:
                     return summary
 
             print("  → Empty or low-quality response")
@@ -77,10 +71,10 @@ def summarize_text(title: str, content: str, max_retries: int = 3) -> Optional[s
     return None
 
 
-def summarize_pending_articles(db: Session, limit: int = 8) -> int:
+def summarize_pending_articles(db: Session, limit: int = 12) -> int:
     """
     Summarize articles that still need an llm_summary.
-    Uses conservative rate limiting for free tier.
+    Commits after every article to avoid Neon SSL timeout.
     """
     articles = (
         db.query(RawArticle)
@@ -97,18 +91,26 @@ def summarize_pending_articles(db: Session, limit: int = 8) -> int:
     count = 0
     for i, article in enumerate(articles, 1):
         print(f"[{i}/{len(articles)}] {article.title[:70]}...")
-        summary = summarize_text(article.title, article.content or article.summary_raw or "")
+
+        summary = summarize_text(
+            article.title,
+            article.content or article.summary_raw or ""
+        )
 
         if summary:
             article.llm_summary = summary
-            count += 1
-            print(f"  ✓ Saved ({len(summary)} chars)")
+            try:
+                db.commit()          # ← commit immediately
+                count += 1
+                print(f"  ✓ Saved ({len(summary)} chars)")
+            except Exception as e:
+                print(f"  ✗ Failed to save: {e}")
+                db.rollback()
         else:
             print("  ✗ Skipped")
 
-        # Very safe delay for free tier (≈ 3–4 requests per minute)
+        # Respect free-tier rate limits
         if i < len(articles):
             time.sleep(18)
 
-    db.commit()
     return count
