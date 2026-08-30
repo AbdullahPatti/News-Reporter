@@ -5,7 +5,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from fastapi import Header, HTTPException
-from app.services.scheduler import pre_fetch_and_summarize, run_morning_digest
+from app.services.scheduler import pre_fetch_and_summarize, run_morning_digest, force_send_digest
 from app.services.email_builder import get_landing_preview
 from app.config import settings
 
@@ -172,9 +172,10 @@ def trigger_prefetch(x_internal_key: str = Header(None)):
 
 @router.post("/internal/run-digest")
 def trigger_digest(x_internal_key: str = Header(None)):
-    """Manually trigger the morning digest sending"""
+    """Manually trigger digest sending — works at any time of day"""
     if settings.INTERNAL_API_KEY and x_internal_key != settings.INTERNAL_API_KEY:
         raise HTTPException(status_code=403, detail="Invalid internal key")
 
-    run_morning_digest()
-    return {"status": "digest job completed"}
+    result = force_send_digest()
+    return {"status": "digest job completed", **result}
+

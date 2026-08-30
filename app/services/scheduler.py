@@ -42,6 +42,66 @@ def pre_fetch_and_summarize():
         db.close()
 
 
+def _send_to_users(db: Session, users, now: datetime):
+    """
+    Shared helper: fetches today's articles and sends digests to the given users.
+    Returns (sent_count, total_users).
+    """
+    # Get today's articles once (shared for all users)
+    pakistan_articles, world_articles = get_todays_articles(db)
+
+    if not pakistan_articles and not world_articles:
+        print("No articles available to send.")
+        return 0, len(users)
+
+    print(f"Found {len(pakistan_articles)} Pakistan + {len(world_articles)} World articles")
+
+    sent_count = 0
+    for user in users:
+        try:
+            html = build_digest_html(user, pakistan_articles, world_articles)
+            subject = f"Daily Digest • {now.strftime('%d %b')} – Top stories for you"
+
+            msg_id = send_digest_email(user.email, subject, html)
+
+            # Log the attempt
+            log = DigestLog(
+                user_id=user.id,
+                status="sent" if msg_id else "failed",
+                subject=subject,
+                article_count=len(pakistan_articles) + len(world_articles),
+                provider_message_id=msg_id,
+                error_message=None if msg_id else "Failed to send"
+            )
+            db.add(log)
+
+            if msg_id:
+                user.last_digest_sent_at = now
+                sent_count += 1
+                print(f"  ✓ Sent to {user.email}")
+            else:
+                print(f"  ✗ Failed to send to {user.email}")
+
+            db.commit()
+
+        except Exception as e:
+            print(f"  ✗ Error for {user.email}: {e}")
+            db.rollback()
+            # Still log the failure
+            try:
+                log = DigestLog(
+                    user_id=user.id,
+                    status="failed",
+                    error_message=str(e)
+                )
+                db.add(log)
+                db.commit()
+            except:
+                db.rollback()
+
+    return sent_count, len(users)
+
+
 def run_morning_digest():
     """
     Runs every 15–20 minutes between 6–10 AM.
@@ -53,6 +113,7 @@ def run_morning_digest():
 
     # Only run inside the delivery window
     if current_hour < 6 or current_hour > 10:
+        print(f"[{now}] Skipping scheduled digest — hour {current_hour} is outside 6–10 window.")
         return
 
     print(f"[{now}] Running morning digest check for hour {current_hour}...")
@@ -77,57 +138,49 @@ def run_morning_digest():
             return
 
         print(f"Found {len(users)} users for hour {current_hour}")
-
-        # Get today's articles once (shared for all users)
-        pakistan_articles, world_articles = get_todays_articles(db)
-
-        if not pakistan_articles and not world_articles:
-            print("No articles available to send.")
-            return
-
-        for user in users:
-            try:
-                html = build_digest_html(user, pakistan_articles, world_articles)
-                subject = f"Daily Digest • {now.strftime('%d %b')} – Top stories for you"
-
-                msg_id = send_digest_email(user.email, subject, html)
-
-                # Log the attempt
-                log = DigestLog(
-                    user_id=user.id,
-                    status="sent" if msg_id else "failed",
-                    subject=subject,
-                    article_count=len(pakistan_articles) + len(world_articles),
-                    provider_message_id=msg_id,
-                    error_message=None if msg_id else "Failed to send"
-                )
-                db.add(log)
-
-                if msg_id:
-                    user.last_digest_sent_at = now
-                    print(f"  ✓ Sent to {user.email}")
-                else:
-                    print(f"  ✗ Failed to send to {user.email}")
-
-                db.commit()
-
-            except Exception as e:
-                print(f"  ✗ Error for {user.email}: {e}")
-                db.rollback()
-                # Still log the failure
-                try:
-                    log = DigestLog(
-                        user_id=user.id,
-                        status="failed",
-                        error_message=str(e)
-                    )
-                    db.add(log)
-                    db.commit()
-                except:
-                    db.rollback()
+        _send_to_users(db, users, now)
 
     except Exception as e:
         print(f"Morning digest job failed: {e}")
+    finally:
+        db.close()
+
+
+def force_send_digest():
+    """
+    Manually triggered — bypasses the 6–10 AM time window.
+    Sends to ALL active users who haven't received today's digest,
+    regardless of their preferred_hour.
+    Returns a summary dict with counts.
+    """
+    now = datetime.now(PKT)
+    print(f"[{now}] FORCE sending digest to all pending users...")
+
+    db = SessionLocal()
+    try:
+        today_start = datetime.combine(now.date(), datetime.min.time(), tzinfo=PKT)
+
+        # ALL active users who haven't received today's digest
+        users = (
+            db.query(User)
+            .filter(
+                User.is_active == True,
+                (User.last_digest_sent_at == None) | (User.last_digest_sent_at < today_start)
+            )
+            .all()
+        )
+
+        if not users:
+            print("No pending users found — everyone already received today's digest.")
+            return {"sent": 0, "total_users": 0, "message": "All users already received today's digest"}
+
+        print(f"Found {len(users)} users pending digest")
+        sent, total = _send_to_users(db, users, now)
+        return {"sent": sent, "total_users": total}
+
+    except Exception as e:
+        print(f"Force digest failed: {e}")
+        return {"sent": 0, "error": str(e)}
     finally:
         db.close()
 
